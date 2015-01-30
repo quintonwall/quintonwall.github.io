@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Quinton Wall : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/bootstrap.min.css">
+
+
+    <title>Designing Enterprise Mobile Apps With iOS and Salesforce</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/quintonwall">View on GitHub</a>
+
+          <h1 id="project_title">Designing Enterprise Mobile Apps With iOS and Salesforce</h1>
+          <h2 id="project_tagline"></h2>
+<p><center><a class="btn btn-primary btn-lg" style="background-color: transparent;color: #00A1E1;"
+                  href="../index.html"
+                      role="button">Series Home</a></center></p>
+          <h2 id="project_tagline"></h2>
+          <div class="row" style="text-align: center">
+            <a href="https://twitter.com/share" class="twitter-share-button" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<a href="https://twitter.com/quintonwall" class="twitter-follow-button" data-show-count="false">Follow @quintonwall</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+          </div>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>III. Prepare Your Base App with Swift and the Salesforce Mobile SDK</h3>
+<p>In <a href="../tutorial1/tutorial1.html">tutorial I</a> &amp; II we spent some time on creating a lo-fi prototype, eliciting user feedback, and creating some graphics for our user interface. It may seem counterintuitive to postpone opening XCode and jumping right into build your app, but a little time spent up front with understanding what you user needs results in a much better final product.</p>
+
+<p>But now, it is time to code. </p>
+
+<h4 id="thesalesforcemobilesdkforios">The Salesforce Mobile SDK for iOS</h4>
+
+<p>The Salesforce Mobile SDK for iOS provides a complete series of libraries and framework for authenticating against, and accessing the Salesforce1 Rest APIs. The Mobile SDK also contains a number of other incredibly useful features including SmartSync, a framework for offline data sync, and SmartStore, for secure data storage. We will cover SmartSync, and SmartStore, in later tutorials. For now, we will focus on our two primary needs: authentication, and access to data.</p>
+
+<h4 id="gettingstarted">Getting Started</h4>
+
+<p>The Mobile SDK gives you a <a href="https://github.com/forcedotcom/SalesforceMobileSDK-iOS">number of options to get started</a>, but as mentioned in tutorial I, we are going to keep things simple and provided the fastest way for you to get going. This means installing a few applications to start. A quick note just in case you are branding new to building iOS apps; iOS apps can only be built on a mac (sorry PC folks). All of the instructions in this tutorial assume that you are using a current version of OSX, preferably Yosemite.</p>
+
+<h4 id="installnode.js">Install Node.js</h4>
+
+<p>Node.js is a popular programming language for the web. We are not going to use Node.js at all, but use a packaging app called NPM. The easiest way to get NPM is install Node.js - it comes bundled together.</p>
+
+<p>If you don't have Node.js, no problem - installing Node.js is a snap. Go to <a href="http://nodejs.org">nodejs.org</a>, click the install button, the install the package which downloads. Accept the defaults, but don't hit close just yet. Make sure you take a few minutes to read the PATH instructions to make sure /usr/local/bin is in your PATH</p>
+
+<h4 id="installforceios">Install forceios</h4>
+
+<p>Forceios is a handy little binary for creating base projects already configured to connect to the Salesforce1 Platform. Go ahead an open up a terminal window and execute the following command to install forceios:</p>
+
+<p><code>sudo npm install forceios -g</code></p>
+
+<h4 id="createyourfirstapp">Create your first app</h4>
+
+<p>Go ahead and create a new directory where you want the code for your app to reside. Then, from the command line type the following:</p>
+
+<p><code>forceios create</code></p>
+
+<p>You will be promoted to enter the following information:</p>
+
+<ul>
+<li>Application type: enter 'native'</li>
+<li>Application name: enter 'SalesforceTasks'</li>
+<li>Output directory: press ENTER</li>
+<li>Company identifier: enter com.[yourname].salesforcetasks, eg: com.quintonwall.salesforcetasks</li>
+<li>Organization name: [your name], eg: Quinton Wall</li>
+<li>Connected App ID: press ENTER</li>
+<li>Connected App Callback URL: press ENTER</li>
+</ul>
+
+<p>The Mobile SDK will go off and create a pre-configured app for you. Navigate to the newly created SalesforceTasks directory, and open the SalesforceTasks Xcode project.</p>
+
+<h4 id="theswiftprogramminglanguage">The Swift Programming Language</h4>
+
+<p>Last year at WWDC Apple surprised us all by releasing an entirely new programming language for developing OSX and iOS apps, called Swift. Since it's release, Swift has rapidly grown to one of the most popular languages in the world. But this rapid change and adoption, does create some challenges: the Mobile SDK is written using Objective-C, and our starter project is also written in Objective-C. </p>
+
+<p>Thankfully, we can leverage both Objective-C and Swift in the same project. Just like designing our prototypes, spending a little bit of effort creating a bridge from Objective-C to Swift in our project will allow us to write almost all of our app in Swift. This means that not only are we going to create a killer Tasks app, we are also going to learn one of the hottest languages around right now!</p>
+
+<p><iframe width="420" height="315" src="https://www.youtube.com/embed/eWBYz_wbo2o" frameborder="0" allowfullscreen></iframe></p>
+
+<p>Once you have your empty SalesforceTasks-Bridging-Header.h file, add the following lines:</p>
+
+<p><code>#import &lt;UIKit/UIKit.h&gt;
+ #import &quot;SFRestAPI.h&quot;
+ #import &quot;SFRestRequest.h&quot;</code></p>
+
+<p>To confirm that you bridge is set up correctly, try creating the following class definition in Test.swift</p>
+
+<p><code>class Test: NSObject, SFRestDelegate {
+}</code></p>
+
+<p>If SFRestDelegate auto-completes, you are all set!</p>
+
+<p><iframe width="560" height="315" src="https://www.youtube.com/embed/3p2b6u5TXb4" frameborder="0" allowfullscreen></iframe></p>
+
+<h4 id="usingstoryboards">Using Storyboards</h4>
+
+<p>Another recent addition to the iOS Developer's toolkit is Storyboards. Storyboards allow you to visually layout you app screens in a single place. These storyboards function just like their real world counterpart for storyboarding scenes in a movie. In fact, screens in iOS storyboard-parlayance are actually called scenes. The best thing about storyboards though, is that they make it incredibly easy to visually describe scene transitions, called seques (pronounced segway). </p>
+
+<p>Right now, the generated XCode Project uses XIB files, which is an older approach to creating scenes. Thankfully it doesn't take much to support storyboards.</p>
+
+<p>Right click the SalesforceTasks folder, and select New File, then choose Storyboard (from under iOS User Interface), let's call it Main</p>
+
+<p><iframe width="560" height="315" src="https://www.youtube.com/embed/4FnkJKdhsQI" frameborder="0" allowfullscreen></iframe></p>
+
+<p>Now that we have our Storyboard, we need to add a home scene to it. Each scene is supported by at least one Controller. Many scenes rely on multiple controllers to assist in encapsulation and strong separation of code.</p>
+
+<p>Why do we need a a controller? The controller contains programatic logic needed by the scene to create a interactive User Interface. You can do an amazing amount just with Storyboards and Scenes, but at some point you need to write code as well. </p>
+
+<p>Looking back at our prototype we need a scene that handles authentication, and another scene that lists tasks. The Mobile SDK takes care of the authentication scene for us - although we will tweak it a little to use our storyboard rather than the XIB - , which means all we need to do is add a controller than handles lists. Lists within Xcode are supported by Table views. Let's start simple and add a basic View controller component that we can add a table view too, and create the Controller Swift file. You may notice that there is also a TableViewController which is a handy shortcut for creating what we need, but at least in Xcode 6.3, there is some strange behavior that causes a TableViewController to not include top and bottom margin constraints. These constraints will come in very handy shortly!</p>
+
+<p><iframe width="560" height="315" src="https://www.youtube.com/embed/xaC2zP1ZNQo" frameborder="0" allowfullscreen></iframe></p>
+
+<h4 id="editingtheappdelegate">Editing the AppDelegate</h4>
+
+<p>Every Xcode project you create includes an AppDelegate file. This is the first piece of code that executed as the app starts up, and manages all of the interactions. The AppDelegate which is contained in the Mobile SDK template project we created manages displaying the Salesforce authentication screen and routing the successful authentication to the first scene of our app. By default, this first scene is a XIB file. We are going to change this to point to our Main storyboard and new TaskViewInterfaceController. </p>
+
+<p>The AppDelegate is written in Objective-C, not Swift. As such, you will need to click on AppDelegate.m and add the following lines to the import section at the top of the file</p>
+
+<p><code>#import &quot;SalesforceTasks-Bridging-Header.h&quot;</code>
+<code>#import &quot;SalesforceTasks-Swift.h</code></p>
+
+<p>(Note: If you decided to create your project with a different name that includes spaces or hyphens, the generated bridge files convert these characters to underscores. For example, If you called your project Salesforce-Tasks, your bridge files would be named Salesforce_Tasks-Swift.h etc.)</p>
+
+<p>Now you have your headers sorted, replace the contents of the following two methods: <em>initializeAppViewState</em>, and <em>setupRootViewController</em>, with this code to use our storyboard and controller.</p>
+
+<pre><code>- (void)initializeAppViewState
+{
+    NSString * storyboardName = @&quot;Main&quot;;
+    NSString * viewControllerID = @&quot;TaskHome&quot;;
+    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
+    self.window.rootViewController = (TaskHomeViewController *)[storyboard instantiateViewControllerWithIdentifier:viewControllerID];
+    [self.window makeKeyAndVisible];
+}
+
+- (void)setupRootViewController
+{
+    NSString * storyboardName = @&quot;Main&quot;;
+    NSString * viewControllerID = @&quot;TaskHome&quot;;
+    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
+    TaskHomeViewController *controller = (TaskHomeViewController *)[storyboard instantiateViewControllerWithIdentifier:viewControllerID];
+    self.window.rootViewController = controller;
+}
+</code></pre>
+
+<h4 id="runyourapp">Run your app</h4>
+
+<p>Your app template is done. Click run to test it. </p>
+
+<p>Great job! You just created a bridge from Objective-C to Swift, and created a Storyboard and Controller to start building your app with the very latest tools.</p>
+
+
+<a href="https://twitter.com/share" class="twitter-share-button" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+
+<!-- google analytics -->
+ <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-5374732-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+</section></div></body></html>
