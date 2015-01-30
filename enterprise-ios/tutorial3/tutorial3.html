@@ -94,14 +94,15 @@
 
 <p>Once you have your empty SalesforceTasks-Bridging-Header.h file, add the following lines:</p>
 
-<p><code>#import &lt;UIKit/UIKit.h&gt;
+<p><pre>
+ #import &lt;UIKit/UIKit.h;
  #import &quot;SFRestAPI.h&quot;
- #import &quot;SFRestRequest.h&quot;</code></p>
+ #import &quot;SFRestRequest.h&quot;</pre></p>
 
 <p>To confirm that you bridge is set up correctly, try creating the following class definition in Test.swift</p>
 
-<p><code>class Test: NSObject, SFRestDelegate {
-}</code></p>
+<p><pre>class Test: NSObject, SFRestDelegate {
+}</pre></p>
 
 <p>If SFRestDelegate auto-completes, you are all set!</p>
 
@@ -131,8 +132,9 @@
 
 <p>The AppDelegate is written in Objective-C, not Swift. As such, you will need to click on AppDelegate.m and add the following lines to the import section at the top of the file</p>
 
-<p><code>#import &quot;SalesforceTasks-Bridging-Header.h&quot;</code>
-<code>#import &quot;SalesforceTasks-Swift.h</code></p>
+<p><pre>
+#import &quot;SalesforceTasks-Bridging-Header.h&quot;
+#import &quot;SalesforceTasks-Swift.h</pre></p>
 
 <p>(Note: If you decided to create your project with a different name that includes spaces or hyphens, the generated bridge files convert these characters to underscores. For example, If you called your project Salesforce-Tasks, your bridge files would be named Salesforce_Tasks-Swift.h etc.)</p>
 
