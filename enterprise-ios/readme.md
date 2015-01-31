@@ -1,0 +1,1 @@
+This repo contains all of the source material (code, images, videos etc) for the Designing Enterprise Mobile Apps with iOS and Salesforce tutorial series published here: http://quintonwall.github.io/enterprise-ios
