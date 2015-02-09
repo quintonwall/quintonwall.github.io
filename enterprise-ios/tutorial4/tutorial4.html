@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Quinton Wall : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/bootstrap.min.css">
+
+
+    <title>Designing Enterprise Mobile Apps With iOS and Salesforce</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/quintonwall/quintonwall.github.io/tree/master/enterprise-ios">Download entire series</a>
+          <h1 id="project_title">Designing Enterprise Mobile Apps With iOS and Salesforce</h1>
+          <h2 id="project_tagline"></h2>
+<p><center><a class="btn btn-primary btn-lg" style="background-color: transparent;color: #00A1E1;"
+                  href="../index.html"
+                      role="button">Series Home</a></center></p>
+          <h2 id="project_tagline"></h2>
+          <div class="row" style="text-align: center">
+            <a href="https://twitter.com/share" class="twitter-share-button" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<a href="https://twitter.com/quintonwall" class="twitter-follow-button" data-show-count="false">Follow @quintonwall</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+          </div>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Querying Salesforce Data</h3>
+
+
+<a href="https://twitter.com/share" class="twitter-share-button" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+
+<p>
+In the previous tutorials we prototyped our app, added a little design, and got our mobile sdk base app ready to go. Now it's time to start working with Salesforce data. 
+</p>
+
+<h4 id="SalesforceSDKManager">SalesforceSDKManager</h4>
+<p>When we created our base app, we inherited a number of objects that are important to using the Salesforce APIs. Probably the most important is a shared instance of SalesforceSDKManager. This instance gets created on your behalf as part of the authentication process. Technically speaking SalesforceSDKManager is a singleton - it is only created once in your app lifecycle and shared whenever you need to use it. We're going to be dipping our toe into some Object Oriented theory throughout this tutorial. Don't worry, everything we cover we will put into practice straight away. </p>
+<p>If we look at the AppDelegate.m file that gets executed when our app starts, you can see the SalesforceSDKManager gets initialized with authentication details and access scope amongst other things. This is also where you can set a specific API version that you want to connect to Salesforce via. That's one of the great things about the Salesforce1 Platform - support for individual API versions to ensure your apps don't break when we upgrade our services. </p>
+
+<pre><code>
+[SalesforceSDKManager sharedManager].connectedAppId = RemoteAccessConsumerKey;
+[SalesforceSDKManager sharedManager].connectedAppCallbackUri = OAuthRedirectURI;
+[SalesforceSDKManager sharedManager].authScopes = @[ @"web", @"api" ];
+</code></pre>
+
+
+<p>Most of the time you won't have much need to work directly with setting variables on this class, but from a day to day developer perspective, the SalesforceSDKManager gives you a reference to the methods you will use the most when working with the Salesforce API: data queries, updates, and user information.
+</p>
+
+<h4 id="primer">A Little OO Primer</h4>
+<p>In Object Orientated (OO) terms SalesforceSDKManager is a singleton class. It contains logic related to basic functions of working with the Salesforce API. We could go into a long discussion about classes and inheritance, but for now, classes help us with maintenance of our code. Common functions can be encapsulated within a class, and the details hidden from other parts of our app.</p>
+
+ <p>The app we are going to build is about handling Tasks. We are going to be doing a lot of things with them: fetching a list of tasks from Salesforce, updating them, displaying on the screen and so on. We can keep our code clean by combining common logic such as reading and writing data into a class that other parts of our app can call. Not only does it keep our code clean, but it also makes it much easier to reuse this logic. It is totally forseeable that tasks may be updated from a iPhone, a Mac, and maybe even Apple Watch. </p>
+
+<p>Go ahead and create a new Swift file called Tasks by right-clicking on the Classes folder. Then add the following code. </p>
+
+<pre><code>
+class Tasks: NSObject {
+
+}
+</code></pre>
+
+<p>This additional code declares the name of our class, Tasks, and tells Swift that it inherits from NSObject. This is a little more OO theory for us. When a class inherits from another class (called a super class) we have access to the functions of that super class Think of how you inherit traits from your parents - your eyes, nose etc. They are common to your lineage. </p>
+
+<p>That's enough theory for now. Let's get back to coding.</p>
+
+<h4 id="query">Querying data</h4>
+<p>Now that we have our Tasks object, we are going to create a function to get a list of tasks from Salesforce. Add the following code to your class between the curly braces <pre>{}</pre> that mark the start and end of the class definition.</p>
+
+<pre><code>
+  class func getTasks(delegate: SFRestDelegate) {
+        let sharedInstance = SFRestAPI.sharedInstance()
+        let request = sharedInstance.requestForQuery("SELECT Id, AccountId, IsClosed, IsArchived, IsHighPriority, Description, Priority, Subject, Status, ActivityDate FROM Task  where IsClosed = false ") as SFRestRequest
+        
+        sharedInstance.send(request, delegate: delegate)
+    }
+</code></pre>
+<p>Let's break down what is going on here. It's important to get the basics covered.</p>
+
+<pre><code>func getTasks(delegate: SFRestDelegate) {</code></pre>
+<p>The first line is a function definition, getTasks, that takes a single parameter of type SFRestDelegate, and can be called as a static method. (the <i>class</i> keyword means that I do not need to create an instance of the Tasks object to call the function.) This class is called a protocol in Swift. It defines a series of functions that must be included in class to handle responses from salesforce. By specifying parameter of type SFRestDelegate we can easily tell our app which class should handle the response that cnotains a list of tasks.</p> 
+
+<pre><code> let sharedInstance = SFRestAPI.sharedInstance()</code></pre>
+<p>Now that we have our method definition, the very first thing you are always going to do when accessing Salesforce is get a handle onto the sharedInstance object. Remember sharedInstance is created when we successfully authenticated. Salesforce is an enterprise mBaaS, you always need to be authenticated to access the APIs (there are a few instances where this is not quite true, but for our tutorials, it is a safe bet that you need always be authenticated)</p>
+
+<pre><code>
+let request = sharedInstance.requestForQuery("SELECT Id, AccountId, IsClosed, IsArchived, IsHighPriority, Description, Priority, Subject, Status, ActivityDate FROM Task  where IsClosed = false ") as SFRestRequest
+</code></pre>
+<p>Here is where we really start working with data. Whenever querying data you can use the <pre>requestForQuery</pre> method and a <a href="http://www.salesforce.com/us/developer/docs/soql_sosl/">SOQL statement.</a> Think of SOQL as a subset of SQL, but designed for multitenancy architectures. For our tasks app we want all open tasks.</p>
+
+<pre><code>
+sharedInstance.send(request, delegate: delegate)
+</code></pre>
+<p>Now we have our query, and know who is going to handle the response via the delegate, all that is left is to actually send the request. We can call the send method on sharedInstance to handle to network operations required to communicate with Salesforce.</p>
+
+
+<h4 id="delegate">Handling responses</h4>
+<p>What good is sending a request if we can't handle the response? Not much. Good news is that we already know that the SFRequestDelegate is critical to handling them. What is missing is the implementation. There are a number of options for implementing responses in Swift, such as closures, blocks, and a few more ways, but we are going to use the protocol methods defined in SFRequestDelegate. </p>
+
+<p>The next question is where should we handle the response? To start with are going to keep it simple and handle it in TaskHomeViewController. TaskHomeViewController was a class we created when we configured our base app last tutorial, it's the controller behind the taskview in our storyboard. In order to handle these responses we must implement the correct protocol. For the mobile SDK, this is SFRestDelegate.</p>
+
+<p>To recap on our brief OO lesson, Swift supports a feature called protocols, or interfaces as they are often called in other languages like Java. Protocols define a series of functions that must be implemented for a class to be a delegate - something that can handle functionality of the protocol. For our any app working with responses from Salesforce, this protocol is SFRestDelegate. </p>
+
+<p>We tell Xcode that TaskHomeViewController shoud handle responses by adding SFRestDelegate to the class definition. The diagram below gives you an overview on how all of these classes and function calls interact with each other. Once you understand the overall flow, add the new code snippets to your app:</p>
+
+<img src="images/sequence.png" alt="" width="400" height="300"/>
+
+<pre><code>
+class TaskHomeViewController: UIViewController, SFRestDelegate {
+</code></pre>
+<p>And provide implementations for the protolcol's functions:</p>
+
+<pre><code>
+// MARK: salesforce delegate events
+func request(request: SFRestRequest?, didLoadResponse jsonResponse: AnyObject) {
+  //add response code here
+    
+}
+func request(request: SFRestRequest?, didFailLoadWithError error:NSError) {
+  println("-->In Error: \(error)")
+}
+    
+func requestDidCancelLoad(request: SFRestRequest) {
+  println("In requestDidCancelLoad \(request)")
+} 
+    
+func requestDidTimeout(request: SFRestRequest) {
+  println("In requestDidTimeout \(request)")
+}
+
+</code></pre>
+<p>Our TaskHomeViewController is now a delegate for Salesforce requests. This means we can now pass an instance of TaskHomeViewController to our Tasks class. Add the following line to the viewDidLoad() method:</p>
+
+<pre><code> Tasks.getTasks(self) </code></pre>
+
+
+<p>One thing you may notice in the code snippet above, is a comment (as identified by the //) with the word MARK. MARK is a keyword in Xcode that allows you to more easily navigate your code. It's a handy little shortcut and tip to remember.</p>
+
+<iframe width="560" height="315" src="http://youtu.be/lEfXv7DZnxk" frameborder="0" allowfullscreen></iframe>
+
+<img src="images/storyboard.png" alt="" width="600" height="400"/>
+
+<p>For now, we will leave all the function bodies as they are, and focus on completing the request function. This is where a successful response from salesforce will be received. But now we need to add some data into salesforce. </p>
+
+<h4 id="salesforce">Adding Tasks to Salesforce</h4>
+<p>The Salesforce1 Platform provides a lot of features which we will touch on through these tutorials. If you haven't already signed up for a free developer account, please <a href="https://developer.salesforce.com/signup?d=enterprise-ios">do so now.</a> Once you have received your confirmation email and set your password, you will be presented with a home screen. Go ahead and add some tasks now.</p>
+
+<iframe width="560" height="315" src="http://youtu.be/UXS_3tO_Lf4" frameborder="0" allowfullscreen></iframe>
+
+<p>Now that we have some data, let's test our app. Add quick bit of debug with the following snippet, and run your app. You should see a json payload that contains your tasks in the output console of Xcode.
+
+
+<pre><code>println(jsonResponse)</code></pre>
+
+<iframe width="560" height="315" src="http://youtu.be/v0ASwK7IPTc" frameborder="0" allowfullscreen></iframe>
+
+<p>Nice! We now have data in json format. For most of the time you might be using response data, you are going to want to retrieve the actual response array and bind this to an NSArray variable. Once bound, an NSArray makes working with things like tables really easy:</p>
+
+<pre><code>var records = jsonResponse.objectForKey("records") as NSArray</code></pre>
+
+<p>
+You can then access individual responses elements by their location in the array, and the name (key) of the field:
+</p>
+<pre><code>
+var obj : AnyObject! =  records.objectAtIndex(0)
+var desc = obj.objectForKey("Description") as? String
+var subject =  obj.objectForKey("Subject") as String
+</code></pre>
+
+Now's a good time to run your app again, but this time, let's use breakpoints. They are much better than println statements. As you grow more familar with XCode you will learn to love the incredibly powerful debugging features. Aside from breakpoints, XCode also provides some great profiling tools for memory managent and optimization, amongst other things. The key to great, highly performant, mobile apps is being efficient with memory allocation. Starting with a foundation of working with breakpoints is the first step in this.
+
+<iframe width="560" height="315" src="http://youtu.be/yEWVxEocD-Q" frameborder="0" allowfullscreen></iframe>
+ 
+
+
+<h4 id="summary">Summary</h4>
+That's it! You made it through another tutorial. We now have an app that authenticates, and fetches tasks from Salesforce. We alsostarted to learn some object orientated theory and put it into practice. Right now we are not doing much with the data. In the next tutorial we will refactor our app to display this data in a table, and eventually update it. Keep with it! You've come a long way. Nice job. If you missed any steps along the way, you can grab a snapshot of the code <a href="SalesforceTasks-tutorial4.zip">here.</a>
+
+
+<!-- google analytics -->
+ <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-5374732-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+</section></div></body></html>
