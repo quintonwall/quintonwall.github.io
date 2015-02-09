@@ -115,6 +115,8 @@ sharedInstance.send(request, delegate: delegate)
 
 <p>The next question is where should we handle the response? To start with are going to keep it simple and handle it in TaskHomeViewController. TaskHomeViewController was a class we created when we configured our base app last tutorial, it's the controller behind the taskview in our storyboard. In order to handle these responses we must implement the correct protocol. For the mobile SDK, this is SFRestDelegate.</p>
 
+<img src="images/storyboard.png" alt="" width="600" height="400"/>
+
 <p>To recap on our brief OO lesson, Swift supports a feature called protocols, or interfaces as they are often called in other languages like Java. Protocols define a series of functions that must be implemented for a class to be a delegate - something that can handle functionality of the protocol. For our any app working with responses from Salesforce, this protocol is SFRestDelegate. </p>
 
 <p>We tell Xcode that TaskHomeViewController shoud handle responses by adding SFRestDelegate to the class definition. The diagram below gives you an overview on how all of these classes and function calls interact with each other. Once you understand the overall flow, add the new code snippets to your app:</p>
@@ -154,7 +156,7 @@ func requestDidTimeout(request: SFRestRequest) {
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/lEfXv7DZnxk" frameborder="0" allowfullscreen></iframe>
 
-<img src="images/storyboard.png" alt="" width="600" height="400"/>
+
 
 <p>For now, we will leave all the function bodies as they are, and focus on completing the request function. This is where a successful response from salesforce will be received. But now we need to add some data into salesforce. </p>
 
