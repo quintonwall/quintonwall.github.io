@@ -84,12 +84,12 @@ class Tasks: NSObject {
 <p>Now that we have our Tasks object, we are going to create a function to get a list of tasks from Salesforce. Add the following code to your class between the curly braces <pre>{}</pre> that mark the start and end of the class definition.</p>
 
 <pre><code>
-  class func getTasks(delegate: SFRestDelegate) {
-        let sharedInstance = SFRestAPI.sharedInstance()
-        let request = sharedInstance.requestForQuery("SELECT Id, AccountId, IsClosed, IsArchived, IsHighPriority, Description, Priority, Subject, Status, ActivityDate FROM Task  where IsClosed = false ") as SFRestRequest
+class func getTasks(delegate: SFRestDelegate) {
+    let sharedInstance = SFRestAPI.sharedInstance()
+    let request = sharedInstance.requestForQuery("SELECT Id, AccountId, IsClosed, IsArchived, IsHighPriority, Description, Priority, Subject, Status, ActivityDate FROM Task  where IsClosed = false ") as SFRestRequest
         
-        sharedInstance.send(request, delegate: delegate)
-    }
+    sharedInstance.send(request, delegate: delegate)
+}
 </code></pre>
 <p>Let's break down what is going on here. It's important to get the basics covered.</p>
 
@@ -149,8 +149,7 @@ func requestDidTimeout(request: SFRestRequest) {
 </code></pre>
 <p>Our TaskHomeViewController is now a delegate for Salesforce requests. This means we can now pass an instance of TaskHomeViewController to our Tasks class. Add the following line to the viewDidLoad() method:</p>
 
-<pre><code> Tasks.getTasks(self) </code></pre>
-
+<pre><code>Tasks.getTasks(self) </code></pre>
 
 <p>One thing you may notice in the code snippet above, is a comment (as identified by the //) with the word MARK. MARK is a keyword in Xcode that allows you to more easily navigate your code. It's a handy little shortcut and tip to remember.</p>
 
@@ -185,14 +184,13 @@ var desc = obj.objectForKey("Description") as? String
 var subject =  obj.objectForKey("Subject") as String
 </code></pre>
 
-Now's a good time to run your app again, but this time, let's use breakpoints. They are much better than println statements. As you grow more familar with XCode you will learn to love the incredibly powerful debugging features. Aside from breakpoints, XCode also provides some great profiling tools for memory managent and optimization, amongst other things. The key to great, highly performant, mobile apps is being efficient with memory allocation. Starting with a foundation of working with breakpoints is the first step in this.
+<p>Now's a good time to run your app again, but this time, let's use breakpoints. They are much better than println statements. As you grow more familar with XCode you will learn to love the incredibly powerful debugging features. Aside from breakpoints, XCode also provides some great profiling tools for memory managent and optimization, amongst other things. The key to great, highly performant, mobile apps is being efficient with memory allocation. Starting with a foundation of working with breakpoints is the first step in this.</p>
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/yEWVxEocD-Q" frameborder="0" allowfullscreen></iframe>
  
 
-
 <h4 id="summary">Summary</h4>
-That's it! You made it through another tutorial. We now have an app that authenticates, and fetches tasks from Salesforce. We alsostarted to learn some object orientated theory and put it into practice. Right now we are not doing much with the data. In the next tutorial we will refactor our app to display this data in a table, and eventually update it. Keep with it! You've come a long way. Nice job. If you missed any steps along the way, you can grab a snapshot of the code <a href="SalesforceTasks-tutorial4.zip">here.</a>
+<p>That's it! You made it through another tutorial. We now have an app that authenticates, and fetches tasks from Salesforce. We alsostarted to learn some object orientated theory and put it into practice. Right now we are not doing much with the data. In the next tutorial we will refactor our app to display this data in a table, and eventually update it. Keep with it! You've come a long way. Nice job. If you missed any steps along the way, you can grab a snapshot of the code <a href="SalesforceTasks-tutorial4.zip">here.</a></p>
 
 
 <!-- google analytics -->
