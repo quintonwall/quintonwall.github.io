@@ -1,0 +1,147 @@
+#Using Salesforce as Mobile Backend
+
+Salesforce.com is probably best known for their leading CRM product and driving the rise of cloud computing. This CRM product, and the other SaaS products they offer for Service, Marketing, Analytics, and more are all powered by an incredibly scalable PaaS called the Salesforce1 Platform. This platform performs nearly two billion transactions per day with more than half of these via API calls with a response time of around 2 milliseconds!  
+
+The Salesforce1 platform provides a wide array of tools and features to build just about any app you can imagine. Luckily for us, it is perfectly suited to use as a mobile backend, especially for the enterprise. It is helpful to extend the idea of an MBaaS to include many of the features developers expect from a fully featured PaaS offering. This is especially important to enterprises where mobile is an extension to their existing business apps and processes.  What makes it a great mobile backend and platform for enterprise apps? At a minimum, they need to support the following core features: 
+
+![](images/s1mbaas.png)
+
+###Push notifications
+Push notifications require the ability to connect with the phone software or device provider to send messages to mobile apps. For enterprises, push is one of many forms of notification and must form part of a broader universal notification framework that includes push plus more traditional channels such as email, txt, and more.
+
+###Secure offline storage & data sync
+Offline use cases are critical within the enterprise especially within restricted environments such as government,  remote locations including rural areas, offshore oil & gas and field work, as well as the offline by preference - sync as needed. Whilst offline support for apps is relatively simple, enterprises require encrypted offline storage and the ability to sync with the cloud when  back online. 
+
+###Trusted user and security models
+The majority of mobile apps have some form of user model to support authentication. Many consumer apps leverage an existing identity services such as a Google, Twitter, or Facebook. These are great for consumer apps - I don't mind using my Twitter id for logging into Yelp for example, but would you feel comfortable using the a social login for online banking? What is required is a trusted enterprise login. This is what salesforce provides. 
+
+###Customizable data objects
+Every app is different, but they all require the persistence of data somewhere. This may be stored on the device, or in the cloud. As Mobile backends are typically cloud based, they must provide easy to use data modeling tools for the creating of custom data objects and schemas. Salesforce provides a tool called Schema Builder to create, customize, and extend data objects for any app. 
+
+###Integration with other data sources
+Very few organizations may be considered green field  with no existing data sources such as on-premises systems, existing databases, and other cloud apps. Mobile apps for the enterprise must be an extension of these existing data sources. A enterprise mobile platform must integrate with existing data sources and expose them to mobile developers using modern RESTful APIs that respect corporate roles and profiles.
+
+###Ability to quickly create cloud-based custom logic
+A mobile platform enables the creation of cloud-based logic that can be shared by multiple mobile apps.  Cloud-based logic can take many forms: from a process flow,  lifecycle triggers, excel-like formulas, and mobile-first actions for interacting with data from anywhere. The creation of this logic should be possible by developers and business users and instantly accessible via mobile apps, often exposed as [microservices](https://developer.salesforce.com/page/Wiki/Microservices-And-The-Salesforce1-Platform).
+
+###Ease of creating and managing connected mobile apps
+As organizations grow, more and more mobile apps are created and connected to the mobile platform. In order to manage this growth, administrators need a central way to create and establish a trusted relationship for mobile app permissions. At the most basic level, this connected app definition must include a consumer key and secret that the mobile app shall utilize for oAuth authentication. More mature mobile platforms allow the app definition to include authorization parameters include what level of API access, whether access is read-only, or writable, and the establishment of per app pincode and push notification policies.
+
+###Support for Web, Hybrid, and Native apps
+Organizations often select mobile app strategies - web, hybrid, or native - based on many business factors: available technical resources, number of devices and platforms to support, and app level features. Mobile backends must promote the ability to create and share logic and data across multiple apps, and make it possible for organizations to select the best mobile app strategy  on a per app basis. As mobile continues to become the defacto tool for conducting business, a mobile platform strategy that supports all mobile app dev models becomes crucial for long term success
+
+That's enough of MBaaS theory. Let's get back to building our app! During this tutorial we are going to use many of these features to rapidly create a mobile backend for our tasks app. Don't worry if you have never used salesforce.com before. The tools are very intuitive. We'll have our backend created in a snap.
+
+##Sign up for a Salesforce Development environment
+If you do not already have a free Salesforce developer account, you can sign up for one [here](http://developer.salesforce.com/signup). Once you receive your confirmation email and complete the registration process you now have access to the entire Salesforce1 platform. We are only going to use a small subset of everything the platform can do. 
+
+During signup, you created a user account.  The platform provides a [robust user role and profile system](https://help.salesforce.com/HTViewHelpDoc?id=admin_userprofiles.htm).  We will keep it simple for our use case. The important thing to know is users automatically have access to the APIs and you can control permissions based on authentication and authorization via what is called a connected app. We will configure our connected app shortly.
+
+## data objects
+Salesforce comes with an existing data model primarily designed to support CRM use cases. Thankfully we can easily customize this using the Schema Builder, a powerful visual tool for working data objects. Let's open Schema Builder now and check out the Task object provided by Salesforce (note: Salesforce typically refers to data entities as objects. You can think of them similar to core data objects - they define the structure of the data and provide logic for performing CRUD operations. For the remainder of the tutorial when I refer to objects, just think data entities)
+
+
+
+Click Setup--> Schema Builder to open the Schema Builder.  Don't worry if you see a whole lot of objects and relationships. This is the standard schema that comes with Salesforce. It has a whole lot of super useful objects likes Contacts, Products, and Users. We refer to these as standard objects. One of these standard objects is actually related to Tasks. We could use this object, but for our use case, we are going to want to do some custom cloud logic which will be easier to perform on a brand new data object. One thing that you will learn about the Salesforce1 platform is that there is often a number of ways to achieve what you need. Our prototyping work helps us know that we want to use a new custom data object due to the fact that we are likely going to need to send notifications.  Go ahead and click Clear All to unselect all the existing objects, and then create a custom object called CloudTasks.  
+
+[ADD VIDEO  Create-CloudTasks]
+
+<table>
+<tr>
+<td>Field Name</td>
+<td>Field Type</td>
+<td>Additional info</td>
+</tr>
+
+<tr>
+<td>Subject</td>
+<td>String</td>
+<td>length 100</td>
+</tr>
+
+<tr>
+<td>Description</td>
+<td>String</td>
+<td>length 255</td>
+</tr>
+
+<tr>
+<td>Due Date</td>
+<td>String</td>
+<td>length 255</td>
+</tr>
+
+<tr>
+<td>Priority</td>
+<td>Picklist</td>
+<td>Low, Medium, High</td>
+</tr>
+
+<tr>
+<td>Status</td>
+<td>Picklist</td>
+<td>Not Started, In Progress, Completed, Cancelled</td>
+</tr>
+
+<tr>
+<td>Assigned To</td>
+<td>Lookup</td>
+<td>Relationship to User</td>
+</tr>
+</table>
+
+
+
+Great! You just created your first data object within Salesforce. This is what is typically referred to as a custom object. Just by creating the object, the platform has automatically created  a fully managed and versioned RESTful API endpoint.  We are going to use these APIs from our mobile app to access data.You may notice that the custom objects API name is something like CloudTasks__c. Whenever you see the  __c you know that you are dealing with something custom on the platform and there will be on API collisions with standard objects.
+
+###Formula Fields
+Along with the standard fields types such as date, string, number, data objects on Salesforce also support business-level field types including phone numbers, geo-location, and formula fields. You can think of formula fields as spreadsheet like formulas. We are going to add an additional field called Days Overdue using a very simple formula: Today()-Due_date__c
+
+[INSERT FormulaField.mp4]
+
+
+##Connected Apps
+Now that we have our data model, we want to provide a secure way to allow mobile apps to connect and authenticate. We do this with connected apps. centralized control and management including API access, pincode protection and push notification. Connected app  work similar to other cloud platform app definitions such as Facebook, and LinkedIn, just more powerful from an enterprise administration and identity perspective. We are getting a little ahead of ourselves through - let's go ahead and create our basic connected app definition now. 
+
+[insert connected apps video here]
+
+
+
+
+##Cloud Logic
+The ability to add reusable logic across mobile apps, and other cloud apps is an important criteria for a success mobile platform and enterprise agility. Another factor to this success is who can write this logic. Typically, MBaaS solutions target developers only, but within large enterprises, it is business users - those who regularly creates spreadsheets or define business processes - who are often the best people to create this cloud logic. The Salesforce1 Platform supports both programmatic and declarative creation of cloud logic. For our Tasks app, we are going to create both
+
+
+
+During the series of tutorials and building our app, we are going to create two functions to inform users of changes to tasks. We want to send push notifications to their mobile device, and also  send them an email reminder too. Push notification requires us to be a little further on with our actual mobile app. We will come back to that in a later tutorial. Creating a process that sends a email is more generic. Let's go ahead and add one now using Process Builder.
+
+###Business Processes with Process Builder
+Process Builder enables everyone in your organization to visually create business processes. Processes are triggered by the creation, or editing, of data objects - in our case Tasks. Process Builder is a powerful tool that enables to create very complicated processes. We are only going to scratch the surface of what it can do, but it is a helpful exercise to demonstrate that data is often shared across mobile and other apps in the enterprise much more than within consumer apps. 
+
+The first thing that we need to do create an email alert and template that will be used from our  process. During the creation of the email alert, you may also notice that the alert gets assigned a unique name as well. This is actually an API endpoint name. Salesforce1 is an API-first platform - just about everything has a RESTful API available which makes it great for creating mobile apps.
+
+Click on Setup -> Administration Setup->Communication Templates->Email Templates, then press the New Template button
+
+[ADD VIDEO EMAIL TEMPLATE]
+
+Once completed, you should end up with an email template similar to the one below.
+![](images/newtemplate.png)
+
+With our template finished, we can create an email alert. Email Alerts are reusable definitions that we can re-use across  different functions within the Saleforce1 platform such as workflows, approval processes, and in our case, business processes created with process builder.
+
+Click on Setup-> Create -> Workflow & Approvals -> Email Alerts, then press New Email Alert. 
+
+[ADD VIDEO EMAIL ALERT]
+
+Now that we have our email alert and template completed, it is time to create the process flow. Let's do that now.
+
+Click on Setup->Create->Workflow & Approvals -> ProcessBuilder
+
+[ADD VIDEO PROCESS BUILDER]
+
+That was easy wasn't it! Process Builder is a fantastic tool for building business processes in a snap. If you were looking closely too, process builder supports the creation of scheduled actions; we will come back to this process in a later tutorial to add a reminder notification. when tasks are near due, or overdue.
+
+
+##Summary
+Congratulations. You've completed another tutorial and well on your way to having a great mobile app, and reusable cloud logic. In the next tutorial, we are going to jump right into writing some Swift. Keep it up!
+
