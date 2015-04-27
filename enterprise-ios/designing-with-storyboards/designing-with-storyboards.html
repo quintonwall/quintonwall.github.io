@@ -49,19 +49,19 @@
 <p><a href="https://developer.apple.com/xcode/">Xcode</a> is Apple's integrated development environment (IDE) for building native apps - mobile and desktop. Xcode is only available for Macintosh computers. If you don't have a Mac, unfortunately you can't complete the rest of the tutorials. If you have a mac, go to the App Store and <a href="https://developer.apple.com/xcode/downloads/">download it now</a>. This tutorial uses the latest public version of XCode (6.3) and Yosemite 10.10.3.</p>
 
 
-<img src="images/app-store.png" />
+<img src="images/app-store.png" width="80%"/>
 
 
 <p>Once Xcode is installed, go ahead and create a new project, CloudTasks. </p>
 
 
-<img src="images/new-project.png" />
+<img src="images/new-project.png" width="80%"/>
 
 
 <p>Once your project is created, you will be presented with a project window that contains the project files on the left, the editor in the center of the screen, and contextual palette and controls on the right. </p>
 
 
-<img src="images/CloudTasks_xcodeproj.png" />
+<img src="images/CloudTasks_xcodeproj.png" width="80%"/>
 
 
 <h3 id="addingimages">Adding Images</h3>
@@ -77,7 +77,7 @@
 <p>Then, drag them into the Images.xcassets file.</p>
 
 
-<img src="images/xcassets.png" />
+<img src="images/xcassets.png" width="80%"/>
 
 
 <h3 id="storyboards">Storyboards</h3>
@@ -85,7 +85,7 @@
 <p>We will take these artboard exports and map them to our UI within Xcode. Start by locating the file Main.storyboard in the project files on the left. Once you have found it, click it to load the file into the editor window. You should now see what we call a storyboard.</p>
 
 
-<img src="images/main-storyboard.png" />
+<img src="images/main-storyboard.png" width="80%"/>
 
 
 <p>Storyboards work similar to the artboards you created in Sketch; they are the visual representation of an app. I like to think of storyboards as comic strip where I can layout the different scenes and tell my story in the app. Right now you only see one screen, View Controller, with an arrow pointed to it. This arrow represents where your app starts. If you ran this project now, this View Controller would start up. But it's not too exciting yet - there is nothing on it.</p>
@@ -93,29 +93,29 @@
 <p>Unlike Sketch and artboards which don't support transitions (we used <a href="http://flinto.com">Flinto</a> to create html-based transitions), Storyboards make it incredibly easy to connect screens together. From the object library palette in the bottom right, drag two more view controllers onto the storyboard. These will map to the three artboards we created in sketch. </p>
 
 
-<img src="images/add-storyboards.png" />
+<img src="images/add-storyboards.png" width="80%"/>
 
 
 <p>Then, drag and drop an Image View component into each View Controller and make it fill the controller. </p>
 
 
-<img src="images/image-artboard.gif" />
+<img src="images/image-artboard.gif" width="80%"/>
 
 
 <p>Finally, for each Image View Component, change the source image to point to the artboard images you added, making sure that the ViewController with the arrow uses the Task List image, and Change Status image and Swipe Action image are applied to the other View Controllers like the screenshot below.</p>
 
 
-<img src="images/set-imagename.png" />
+<img src="images/set-imagename.png" width="80%"/>
 
 
 
-<img src="images/addstoryboards.png" />
+<img src="images/addstoryboards.png" width="80%"/>
 
 
 <p>You may notice when specifying images into your View Controllers that the images may look a little stretched. This is because our View Controllers are set to width and height of <i>Any</i>. Once we get into autolayouts in a later tutorial, this will make more sense, but for now, a width of height of <i>Any</i> tells Xcode to render the app at the same size for any device (iphone 4,5,6, 6+, iPad etc). In order to make the images fit well though, we need to set a few sizing constraints. Select the View Controllers view, right click and drag, then choose <i>Equal Widths</i>. Repeat, and this time choose <i>Equals Heights.</i> These constraints tell Xcode to render the image to equal the width and height of the device.</p>
 
 
-<img src="images/equalsWH.gif" />
+<img src="images/equalsWH.gif" width="80%"/>
 
 
 <p>Go ahead and repeat this for the two other view controllers.</p>
@@ -125,7 +125,7 @@
 <p>It's time to run your app. Click play to launch the simulator.</p>
 
 
-<img src="images/runapp.png" />
+<img src="images/runapp.png" width="80%"/>
 
 
 <p>Once it loads in the iOS simulator, you will be presented with a screen that looks exactly like the Task List image. This is because that View Controller is specified as the initial controller (indicated by the arrow on our storyboard). But you can't click on it to access the other screens. The next thing we want to add is transitions between screens. In Xcode, these transitions are managed by Segues. </p>
@@ -135,13 +135,13 @@
 <p>Start by selecting the image view component on Tasks List, then changing it's properties to accept user interactions.</p>
 
 
-<img src="images/segue-userint.png" />
+<img src="images/segue-userint.png" width="80%"/>
 
 
 <p>Now, select the tap recognizer from the object palette, drop it onto the image, select the component, right click, drag to the Swipe Action controller, and choose show from the popup menu. That's all we need to do to make a transition in iOS. </p>
 
 
-<img src="images/seque-tap.gif" />
+<img src="images/seque-tap.gif" width="80%"/>
 
 
 <p>Next, we will create another segue, a popup modal transition to show the Change Status screen. We will use the popup model transition because it allows us to specify a transition animation. In this case, we want to transition to rise from the bottom to simulate the menu item appearing. </p>
@@ -149,7 +149,7 @@
 Go ahead and repeat the process of checking User Interactions and adding the tap recognizer, but select the modal option from the popup this time. If you are feeling adventous, try one of the other animation styles like page curl. </p>
 
 
-<img src="images/segue-model.gif" />
+<img src="images/segue-model.gif" width="80%"/>
 
 
 <p>Run the app again, this time tapping on the screens. You should now have some transitions. Nice huh? Of course, we can't go back in our transitions as we never connected what iOS developer call an unwind transition. Don't worry, you will have plenty of hands on experience soon working with more seques when we build our final app.</p>
