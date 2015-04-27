@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Quinton Wall : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/bootstrap.min.css">
+
+
+    <title>Designing Enterprise Mobile Apps With iOS and Salesforce</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/quintonwall/quintonwall.github.io/tree/master/enterprise-ios">Download entire series</a>
+          <h1 id="project_title">Designing Enterprise Mobile Apps With iOS and Salesforce</h1>
+          <h2 id="project_tagline"></h2>
+<p><center><a class="btn btn-primary btn-lg" style="background-color: transparent;color: #00A1E1;"
+                  href="../index.html"
+                      role="button">Series Home</a></center></p>
+          <h2 id="project_tagline"></h2>
+          <div class="row" style="text-align: center">
+            <a href="https://twitter.com/share" class="twitter-share-button" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<a href="https://twitter.com/quintonwall" class="twitter-follow-button" data-show-count="false">Follow @quintonwall</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+          </div>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designing With Storyboards</h3>
+
+<!-- ADD TUTORIAL CONTENT HERE -->
+
+<p>Last tutorial we learned how to create beautifully designed apps using Sketch, and share these hi-fi prototypes via Flinto. Up until this point however, everything has been html based. It's time for us to try our hand at making a native iOS app. </p>
+
+<h3 id="introducingxcode">Introducing Xcode</h3>
+
+<p><a href="https://developer.apple.com/xcode/">Xcode</a> is Apple's integrated development environment (IDE) for building native apps - mobile and desktop. Xcode is only available for Macintosh computers. If you don't have a Mac, unfortunately you can't complete the rest of the tutorials. If you have a mac, go to the App Store and <a href="https://developer.apple.com/xcode/downloads/">download it now</a>. This tutorial uses the latest public version of XCode (6.3) and Yosemite 10.10.3.</p>
+
+
+<img src="images/app-store.png" />
+
+
+<p>Once Xcode is installed, go ahead and create a new project, CloudTasks. </p>
+
+
+<img src="images/new-project.png" />
+
+
+<p>Once your project is created, you will be presented with a project window that contains the project files on the left, the editor in the center of the screen, and contextual palette and controls on the right. </p>
+
+
+<img src="images/CloudTasks_xcodeproj.png" />
+
+
+<h3 id="addingimages">Adding Images</h3>
+
+<p>Now, select Images.xcassets from the project menu on the left. This file is like a binder for storing all of your image assets for your project. It has support for different resolutions of images depending on which device the app is running on, and lets you reference images in your app by their name for dynamic rendering. </p>
+
+<p>If you have not done so already, export your sketch artboards from the previous tutorial. </p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Ijw2bmWCY0w" frameborder="0" allowfullscreen></iframe>
+
+
+
+<p>Then, drag them into the Images.xcassets file.</p>
+
+
+<img src="images/xcassets.png" />
+
+
+<h3 id="storyboards">Storyboards</h3>
+
+<p>We will take these artboard exports and map them to our UI within Xcode. Start by locating the file Main.storyboard in the project files on the left. Once you have found it, click it to load the file into the editor window. You should now see what we call a storyboard.</p>
+
+
+<img src="images/main-storyboard.png" />
+
+
+<p>Storyboards work similar to the artboards you created in Sketch; they are the visual representation of an app. I like to think of storyboards as comic strip where I can layout the different scenes and tell my story in the app. Right now you only see one screen, View Controller, with an arrow pointed to it. This arrow represents where your app starts. If you ran this project now, this View Controller would start up. But it's not too exciting yet - there is nothing on it.</p>
+
+<p>Unlike Sketch and artboards which don't support transitions (we used <a href="http://flinto.com">Flinto</a> to create html-based transitions), Storyboards make it incredibly easy to connect screens together. From the object library palette in the bottom right, drag two more view controllers onto the storyboard. These will map to the three artboards we created in sketch. </p>
+
+
+<img src="images/add-storyboards.png" />
+
+
+<p>Then, drag and drop an Image View component into each View Controller and make it fill the controller. </p>
+
+
+<img src="images/image-artboard.gif" />
+
+
+<p>Finally, for each Image View Component, change the source image to point to the artboard images you added, making sure that the ViewController with the arrow uses the Task List image, and Change Status image and Swipe Action image are applied to the other View Controllers like the screenshot below.</p>
+
+
+<img src="images/set-imagename.png" />
+
+
+
+<img src="images/addstoryboards.png" />
+
+
+<p>You may notice when specifying images into your View Controllers that the images may look a little stretched. This is because our View Controllers are set to width and height of <i>Any</i>. Once we get into autolayouts in a later tutorial, this will make more sense, but for now, a width of height of <i>Any</i> tells Xcode to render the app at the same size for any device (iphone 4,5,6, 6+, iPad etc). In order to make the images fit well though, we need to set a few sizing constraints. Select the View Controllers view, right click and drag, then choose <i>Equal Widths</i>. Repeat, and this time choose <i>Equals Heights.</i> These constraints tell Xcode to render the image to equal the width and height of the device.</p>
+
+
+<img src="images/equalsWH.gif" />
+
+
+<p>Go ahead and repeat this for the two other view controllers.</p>
+
+<h3 id="transitionswithseques">Transitions with Seques</h3>
+
+<p>It's time to run your app. Click play to launch the simulator.</p>
+
+
+<img src="images/runapp.png" />
+
+
+<p>Once it loads in the iOS simulator, you will be presented with a screen that looks exactly like the Task List image. This is because that View Controller is specified as the initial controller (indicated by the arrow on our storyboard). But you can't click on it to access the other screens. The next thing we want to add is transitions between screens. In Xcode, these transitions are managed by Segues. </p>
+
+<p>Segues allow you to specify which screen to transition to, the animation to use in the transition, and which component triggers the transition (buttons, or swipes for example) without the need to write any code. We are going to create some very simple segues between our views. In order to do this, we need to tell our app that the imageview component which we added can accept tap events. Unlike components like buttons, which are enabled to handle taps by default, images need a few extra settings: we need select the User Interaction enabled checkbox on our image view, and add a tap recognizer. </p>
+
+<p>Start by selecting the image view component on Tasks List, then changing it's properties to accept user interactions.</p>
+
+
+<img src="images/segue-userint.png" />
+
+
+<p>Now, select the tap recognizer from the object palette, drop it onto the image, select the component, right click, drag to the Swipe Action controller, and choose show from the popup menu. That's all we need to do to make a transition in iOS. </p>
+
+
+<img src="images/seque-tap.gif" />
+
+
+<p>Next, we will create another segue, a popup modal transition to show the Change Status screen. We will use the popup model transition because it allows us to specify a transition animation. In this case, we want to transition to rise from the bottom to simulate the menu item appearing. </p>
+
+Go ahead and repeat the process of checking User Interactions and adding the tap recognizer, but select the modal option from the popup this time. If you are feeling adventous, try one of the other animation styles like page curl. </p>
+
+
+<img src="images/segue-model.gif" />
+
+
+<p>Run the app again, this time tapping on the screens. You should now have some transitions. Nice huh? Of course, we can't go back in our transitions as we never connected what iOS developer call an unwind transition. Don't worry, you will have plenty of hands on experience soon working with more seques when we build our final app.</p>
+
+<p>Congratulations! You just build your first fully native iOS app.
+
+
+<h3 id="summary">Summary</h3>
+
+<p>During this tutorial, we had a brief introduction to Xcode, how to create a project, add images, and got hands on with storyboards and segues. At this point in the series, we can consider our app design complete. The next set of tutorials will build upon our introduction to Xcode and start to learn how to write Swift. </p>
+
+
+<!-- END ADD TUTORIAL CONTENT SECTION -->
+
+
+<a href="https://twitter.com/share" class="twitter-share-button" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+
+<!-- google analytics -->
+ <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-5374732-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+</section></div></body></html>
