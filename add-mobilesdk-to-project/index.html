@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Add Salesforce Mobile SDK for iOS to an Existing Project</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/docs.min.css" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+
+    <!-- 
+      using this for better syntax highlighting
+      http://demo.stanleyhlng.com/prettify-js/?id=bootstrap-light
+    -->
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+<!-- add a funky responsive image in the jumbotron -->
+  <style type="text/css">
+    .bg {
+      background: url('images/bg_oval-wave.jpg') no-repeat center center;
+      position: fixed;
+      width: 100%;
+      height: 250px; /*same height as jumbotron */
+      top:0;
+      left:0;
+      z-index: -1;
+    }
+
+    .jumbotronX {
+      height: 250px;
+      color: white;
+      text-shadow: #444 0 1px 1px;
+      background:transparent;
+      }
+
+    .btn {
+      background:transparent;
+      border-color: white;
+    }
+
+    
+  </style>
+  </head>
+  <body> 
+<!-- set the paralax background -->
+  <!--div class="bg"></div -->
+  <div class="bs-docs-header" id="content" tabindex="-1">
+     <div class="container">
+       <p>Add the Salesforce Mobile SDKto an existing iOS project</p>
+       <a href="../index.html" class="btn btn-primary"><span class="glyphicon glyphicon-home" aria-hidden="true"/></a>
+       <a href="https://twitter.com/share" class="btn btn-primary" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<a href="https://twitter.com/quintonwall" class="btn btn-primary" data-show-count="false">Follow @quintonwall</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+  </div>
+<div class="well" style="background-color:white;">
+    <h2>Introduction</h2>
+    <p>One of the most common questions I get asked is how do you add the Salesforce Mobile SDK for iOS to an existing project? Admitedly, it was pretty tricky with earlier versions of the Mobile SDK, but Mobile SDK 3.x makes it super easy. This tutorial will show you how to do it. The examples will be in Swift v2, but will work exactly the same for Objective-C, and earlier versions of Swift, minus the obvious syntax difference (and the addition of a briding header for Swift apps...but we will get to that shortly)</p>
+
+    <div class="alert alert-info" role="alert">This tutorial was written using Xcode 7 beta 2 which means things may change before the GA build, but they should effect the code..hopefully.</div>
+
+    <h2>1.Install the Mobile SDK</h2>
+    <div class="alert alert-success" role="alert">You will only need to do this once., not for every project.</div>
+    <p>If you don't already have the Salesforce Mobile SDK for iOS installed, go ahead and clone the Salesfore Mobile SDK for iOS <a href="https://github.com/forcedotcom/SalesforceMobileSDK-iOS">from GitHub.</a> Once you have the SDK on your local machine, do the following in a Terminal window</p>
+
+    <div class="well">
+      <pre class="prettyprint lang-html">
+        cd [path-where-you-cloned-the-repo]/SalesforceMobileSDK-iOS
+        ./install.sh
+      </pre>
+    </div>
+    <p>Once complete, you have the entire SDK, and dependencies. Check!</p>
+
+   <h2>2.Add the Mobile SDK libraries to your project</h2> 
+   <p>The Mobile SDK supports CocoaPods for adding the required libraries to your project. From the command line, change directories to your project root.</p>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">If you already have a Podfile</div>
+    <div class="panel-body">
+      Add the following line:
+      <pre class="prettyprint lang-html">
+        pod 'SalesforceMobileSDK-iOS'
+      </pre>
+      Then run:
+      <pre class="prettyprint lang-html">
+        $ pod install
+      </pre>
+
+    </div>
+  </div>
+  <div class="alert alert-warning" role="alert">The Mobile SDK uses static libraries. This means you can link via the use_frameworks! directive. </div>
+
+
+   <div class="panel panel-primary">
+    <div class="panel-heading">If you don't have a Podfile</div>
+    <div class="panel-body">
+      Change directories, via the command line to your Xcode project home, run:
+      <pre class="prettyprint lang-html">
+        $ pod echo "pod 'SalesforceMobileSDK-iOS'" > Podfile
+        $ pod install
+      </pre>
+      
+      <p>Once completed, your Xcode project will have created a workspace file, and have the Mobile SDK libraries ready to go. From now on, use the *.xcworkspace file, and not the *.xcodeproj file.</p>
+      </div>
+  </div>
+
+  <h2>3. Add the Bridging Header</h2>
+  The Mobile SDK is currently written in Objective-C. In order to access the libraries from Swift, we need to add a bridging header. 
+  <ol>
+  <li>Create a new header (.h) file in the root of your project, and call it [projectname]-BridgingHeader.h (Avoid adding any spaces in the name. If you do, Xcode changes those to an underscore whenever you need to reference them in your app.)
+  <li> In your project build settings, search for Swift Compiler – Code Generation, and next to Objective-C Bridging Header add the name of the file you just created.
+  </ol>
+  <p>Now that you have your bridging header file created, add the following code:</p>
+<pre class="prettyprint lang-html">
+        #ifndef Opt_BridgingHeader_h
+        #define Opt_BridgingHeader_h
+
+
+        #endif /* Opt_BridgingHeader_h */
+
+        #import &lt;SalesforceCommonUtils/SFLogger.h&gt;
+        #import &lt;SalesforceSDKCore/SFUserAccountManager.h&gt;
+        #import &lt;SalesforceSDKCore/SalesforceSDKManager.h&gt;
+        #import &lt;SalesforceSDKCore/SFAuthenticationManager.h&gt;
+        #import &lt;SalesforceSDKCore/SFPushNotificationManager.h&gt;
+        #import &lt;SalesforceSDKCore/SFDefaultUserManagementViewController.h&gt;
+        #import &lt;SalesforceRestAPI/SFRestAPI.h&gt;
+        #import &lt;SalesforceRestAPI/SFRestAPISalesforceAction.h&gt;
+        #import &lt;SalesforceRestAPI/SFRestAPI+Blocks.h&gt;
+        #import &lt;SalesforceRestAPI/SFRestAPI+Files.h&gt;
+        #import &lt;SalesforceOAuth/SFOAuthInfo.h&gt;
+      </pre>  
+
+  <h2>4. Configure your AppDelegate</h2>
+  Now we have our project all configured, we need to update the AppDelgate to initialize the Mobile SDK
+
+  <div class="panel panel-primary">
+   
+    <div class="panel-body">
+      Add the following code above your class definition:
+      <pre class="prettyprint lang-html">
+        let RemoteAccessConsumerKey = "your-connected-app-consumer-key";
+        let OAuthRedirectURI        = "your-connected-app-redirect-uri";
+        let scopes = ["api"];
+      </pre>
+      Then add the following code into your init method:
+      <pre class="prettyprint">
+        SFLogger.setLogLevel(SFLogLevelDebug)
+        
+        SalesforceSDKManager.sharedManager().connectedAppId = RemoteAccessConsumerKey
+        SalesforceSDKManager.sharedManager().connectedAppCallbackUri = OAuthRedirectURI
+        SalesforceSDKManager.sharedManager().authScopes = scopes
+        SalesforceSDKManager.sharedManager().postLaunchAction = {
+            [unowned self] (launchActionList: SFSDKLaunchAction) in
+            let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
+            self.log(SFLogLevelInfo, msg:"Post-launch: launch actions taken: \(launchActionString)");
+            
+        }
+        SalesforceSDKManager.sharedManager().launchErrorAction = {
+            [unowned self] (error: NSError?, launchActionList: SFSDKLaunchAction) in
+            if let actualError = error {
+                self.log(SFLogLevelError, msg:"Error during SDK launch: \(actualError.localizedDescription)")
+            } else {
+                self.log(SFLogLevelError, msg:"Unknown error during SDK launch.")
+            }
+        }
+        SalesforceSDKManager.sharedManager().postLogoutAction = {
+            [unowned self] in
+            self.handleSdkManagerLogout()
+        }
+        SalesforceSDKManager.sharedManager().switchUserAction = {
+            [unowned self] (fromUser: SFUserAccount?, toUser: SFUserAccount?) -> () in
+            self.handleUserSwitch(fromUser, toUser: toUser)
+        }
+      </pre>
+
+    </div>
+  </div>
+  If you have worked with the Mobile SDK before, you might notice I'm missing methods like handleSDKManagerLogout, handleUserSwitch. This is because I prefer to implement these methods in the view controller that I will write to actually deal with the UI of these operations. I find it cleaner, and keeps the AppDelegate from doing too much. This strategy is exactly how we are going to handle login.
+
+  <h2>5. Handle Salesforce Login</h2>
+  The last thing that we need to do is handle the salesforce login: display the login screen, and then accept the response. Most apps have some sort of welcome screen where a user can tap to login before being redirected to the app home. You probably have a storyboard that looks similar to mine below. When a user taps the connect to Salesforce button (on the ViewController labeled 1), we want to to perform the segue to Home (ViewController labeled 2). 
+  <img class="media-object media-middle" src="images/storyboardNums.png" />
+   Within ViewController 1, and once you have wired up the appropriate outlets and actions to handle button taps, and added a seque to ViewController 2 (in my instance I gave it the identifier "loggedIn") add the following line of code to kick off the Salesforce authentication flow into your connectTapped function.
+   <pre class="prettyprint lang-html">
+        SalesforceSDKManager.sharedManager().launch()
+    </pre>
+    Then, to handle to end of the authentication flow, specify that your View Controller is a delegate for the MobileSDK:
+    <pre class="prettyprint">
+     class MyViewController: UIViewController, SFAuthenticationManagerDelegate 
+    </pre>
+    and implement the Delegate's authManagerDidFinish function. I typically check if the username has been populated correctly. If it has, only then do I perform the segue to my HomeController.
+    <div class="alert alert-warning" role="alert">The SFAuthenticationManagerDelegate does include a didAuthenticate function which is technically the correct place to perform a check for successful login, however I have found that this method gets called prior to the SDK performing a remove view for the Salesforce login screen. The result is that our newly displayed Home ViewController is removed. :(</div>
+
+<pre class="prettyprint">
+    func authManagerDidFinish(manager: SFAuthenticationManager!, info: SFOAuthInfo!) {
+    
+     if !SFUserAccountManager.sharedInstance().currentUser.userName.isEmpty {
+         //call the segue with the name you give it in the storyboard editor
+         self.performSegueWithIdentifier("loggedIn", sender: nil)
+        }
+    } 
+    </pre>
+
+    <h2>Summary</h2>
+    That's it. Your app now has the Salesforce Mobile SDK for iOS configured, and you have a pretty nifty little login button/flow to go with it. The code I used throughout this tutorial is from a project that I am actively working on. I made a <a href="https://github.com/quintonwall/opt/tree/Basic-App-with-Auth">branch of it with just the config and code</a> I used here. 
+
+    
+</div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <script type='text/javascript'>
+        
+        $(document).ready(function() {
+            var jumboHeight = $('.jumbotron').outerHeight();
+
+      function parallax(){
+        var scrolled = $(window).scrollTop();
+       $('.bg').css('height', (jumboHeight-scrolled) + 'px');
+      }
+
+      $(window).scroll(function(e){
+         parallax();
+      });
+        
+   });
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>Automatically export Sketch slices into an Xcode .xcassets bundle</title>
+	<meta name="author" content="Ryan Gomba" />
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<link rel="alternate" type="application/rss+xml" title="Ryan Gomba" href="/feed.xml">
+	<link rel="stylesheet" href="css/main.css" type="text/css">
+	<link rel="stylesheet" href="css/syntax.css" type="text/css">
+	<link rel="stylesheet" type="text/css" href="//cloud.typography.com/795240/719986/css/fonts.css" />
+	<script src="//use.typekit.net/dne5nha.js"></script>
+	<script>try{Typekit.load();}catch(e){}</script>
+
+    
+    <meta property="og:image" content="https://i.vimeocdn.com/video/492422553.jpg">
+    
+	
+	<!-- ANALYTICS -->
+	
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-11056566-1']);
+		_gaq.push(['_trackPageview']);
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+	
+</head>
+<body>
+	<div class="wrapper">
+		<header>
+			<img class="me" src="/assets/shared/avatar.png"/>
+			<h1><a href="/">Ryan Gomba</a></h1>
+			<ul>
+	<li><a href="http://instagram.com/ryangomba"><img src="/assets/shared/instagramGlyph.png"></a></li>
+	<li><a href="http://vimeo.com/ryangomba"><img src="/assets/shared/vimeoGlyph.png"></a></li>
+	<li><a href="https://github.com/ryangomba"><img src="/assets/shared/githubGlyph.png"></a></li>
+</ul>
+		</header>
+		<section class="post">
+	<article>
+		<!-- <h4>10 October 2014</h4> -->
+		<h1><a href="">Automatically export Sketch slices into an Xcode .xcassets bundle</a></h1>
+		<h2 class="subtitle">Use sketchtool to improve your workflow</h2>
+		<p><a href='http://bohemiancoding.com/sketch/'>Sketch</a> has become a popular tool for designing mobile apps. Among Sketch&#8217;s strengths is its ability to easily export image assets at multiple resolutions from artboards, layers, and slices. These assets can then be added to Xcode for use in an iOS app.</p>
+
+<p>Still, the process of exporting assets isn&#8217;t perfect. Whenever you add or modify an artboard, layer, or slice, you need to manually export new assets. This entails clicking export, confirming the export directory, finding the newly exported images in Finder, dragging them into Xcode, and rebuilding your app. The routine can grow tiresome.</p>
+
+<p>I wrote a script to automate the process of exporting assets from Sketch into an Xcode project. Here&#8217;s my workflow:</p>
+<div style='width: 100%; position: relative; padding-bottom: 62.5%;'><iframe allowFullScreen='' frameborder='0' height='100%' mozallowfullscreen='' src='http://player.vimeo.com/video/108668219' style='position: absolute;' webkitAllowFullScreen='' width='100%'> </iframe></div>
+<p>Any time I modify my Sketch document, all I need to do is jump back into Xcode and press &#8220;run.&#8221; Pretty cool, right? If you&#8217;d like to automate this process too, follow along. It only takes a few minutes to get set up.</p>
+
+<p>Start by installing <a href='http://bohemiancoding.com/sketch/tool/'>sketchtool</a>, a command-line tool that allows you to export artboards, layers, and slices from a .sketch file.</p>
+<div class='highlight'><pre><code class='bash'>curl -OL http://sketchtool.bohemiancoding.com/sketchtool-latest.zip
+unzip sketchtool-latest.zip
+rm sketchtool-latest.zip
+<span class='nb'>cd </span>sketchtool
+./install.sh
+<span class='nb'>cd</span> ../
+rm -r sketchtool
+</code></pre></div>
+<p>sketchtool&#8217;s &#8220;Hello World&#8221;:</p>
+<div class='highlight'><pre><code class='bash'>sketchtool <span class='nb'>export </span>slices <span class='s2'>&quot;MyDesign.sketch&quot;</span> --output<span class='o'>=</span><span class='s2'>&quot;~/Desktop&quot;</span>
+</code></pre></div>
+<p>Next, download a simple python script I&#8217;ve written <a href='https://github.com/ryangomba/Slicer/blob/master/slice.py'>(slice.py)</a> and place it somewhere inside your Xcode project directory. This script uses sketchtool to export your assets, then bundles each set of assets (@1x, @2x, etc.) into an <em>imageset</em> that gets copied into an asset bundle. Usage:</p>
+<div class='highlight'><pre><code class='bash'>python slice.py <span class='s2'>&quot;INPUT.sketch&quot;</span> <span class='s2'>&quot;OUTPUT.xcassets&quot;</span>
+</code></pre></div>
+<p>To run this script automatically, add a &#8220;Run Script&#8221; build phase to your Xcode project. You&#8217;ll need to ensure the .py, .sketch, and .xcassets paths are correctly defined. I find it easy to define them relative to my $PROJECT_DIR.</p>
+<div class='highlight'><pre><code class='bash'>python <span class='s2'>&quot;$PROJECT_DIR/slice.py&quot;</span> <span class='s2'>&quot;$PROJECT_DIR/Design.sketch&quot;</span> <span class='s2'>&quot;$PROJECT_DIR/Images.xcassets&quot;</span>
+</code></pre></div>
+<p><strong>Important! Make sure this script runs before &#8220;Copy Bundle Resources&#8221;</strong> so that your assets are exported before Xcode copies them into your bundle.</p>
+
+<p><img alt='Build Phases' src='/assets/automatically-export-sketch-slices-xcode/build-phases.jpg' /></p>
+
+<p>Hey that&#8217;s it! Now, whenever you build your app, Xcode will automatically export your assets and add them to the specified bundle.</p>
+
+<p>This script not only saves time, but also improves how designers and developers can interact. If a designer modifies assets in Sketch, a developer can simply pull the changes and updated images will appear in the next build.</p>
+
+<p><strong>Note:</strong> slice.py has worked well for me so far. However, I&#8217;m sure it lacks a bit of robustness for other use cases; please improve it <a href='https://github.com/ryangomba/Slicer'>on Github</a>.</p>
+		<!-- <div class="perma">
+			<p><a class="permalink" href="">&#9733;</a></p>
+		</div> -->
+	</article>
+</section>
+
+		<footer>
+			<p><b>My name is Ryan Gomba.</b> I've made a best-selling weather app, interned at geo-location startup SimpleGeo, and worked at Instagram. Formerly a collegiate track athlete, I now trek; so far I've explored the Swiss Alps, Norway, and the Indian Himalayas.</p>
+			<ul>
+	<li><a href="http://instagram.com/ryangomba"><img src="/assets/shared/instagramGlyph.png"></a></li>
+	<li><a href="http://vimeo.com/ryangomba"><img src="/assets/shared/vimeoGlyph.png"></a></li>
+	<li><a href="https://github.com/ryangomba"><img src="/assets/shared/githubGlyph.png"></a></li>
+</ul>
+		</footer>
+	</div>
+</body>
+</html>
+
