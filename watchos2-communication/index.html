@@ -108,7 +108,7 @@
     </pre>
     <p>Once the app knows that I have a paired phone, and active app, I can send the message:</p>
 
-  <pre class="prettyprint lang-html">
+  <pre class="prettyprint lang-java">
     override func willActivate() {
         super.willActivate()
 
@@ -163,7 +163,7 @@
   <p> The code snippet below comes from a Helper class I have in my phone app. It has already been set as a
     WCSessionDelegate and checked for the active session. </p>
 
-    <pre class="prettyprint lang-html">
+    <pre class="prettyprint lang-java">
     func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
       //make sure we are logged in
        if( SFUserAccountManager.sharedInstance().currentUser == nil) {
@@ -198,7 +198,7 @@
   reply code blocks (the big thing that I found was missing in other watchOS2 tutorials). Let's decompose the func a bit to help demonstrate how to communicate with the watch.
 </p>
 <p>The first check that is performed is whether the user is actually logged into salesforce, if they are not we can send the response directly back: </p>
-<pre class="prettyprint lang-html">
+<pre class="prettyprint lang-java">
     replyHandler(["error": "not logged in"])
 </pre>
 
