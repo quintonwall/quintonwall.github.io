@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Add Salesforce Mobile SDK for iOS to an Existing Project</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/docs.min.css" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+
+    <!--
+      using this for better syntax highlighting
+      http://demo.stanleyhlng.com/prettify-js/?id=bootstrap-light
+    -->
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+<!-- add a funky responsive image in the jumbotron -->
+  <style type="text/css">
+    .bg {
+      background: url('images/bg_oval-wave.jpg') no-repeat center center;
+      position: fixed;
+      width: 100%;
+      height: 250px; /*same height as jumbotron */
+      top:0;
+      left:0;
+      z-index: -1;
+    }
+
+    .jumbotronX {
+      height: 250px;
+      color: white;
+      text-shadow: #444 0 1px 1px;
+      background:transparent;
+      }
+
+    .btn {
+      background:transparent;
+      border-color: white;
+    }
+
+
+  </style>
+  </head>
+  <body>
+<!-- set the paralax background -->
+  <!--div class="bg"></div -->
+  <div class="bs-docs-header" id="content" tabindex="-1">
+     <div class="container">
+       <p>Messaging between iPhone and Apple Watch with WatchOS2</p>
+       <a href="../index.html" class="btn btn-primary"><span class="glyphicon glyphicon-home" aria-hidden="true"/></a>
+       <a href="https://twitter.com/share" class="btn btn-primary" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<a href="https://twitter.com/quintonwall" class="btn btn-primary" data-show-count="false">Follow @quintonwall</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+  </div>
+<div class="well" style="background-color:white;">
+    <h2>Introduction</h2>
+    <p>During WWDC15, Apple announced WatchOS2. Part of the new OS is a much cleaner pattern for communication between the watch and phone, called Watch Connectivity.
+    There were some <a href="https://developer.apple.com/videos/wwdc/2015/?id=713">great sessions</a> at the conference explaining how to use it, as well as a few super helpful blog posts
+    such as this one from <a href="http://www.kristinathai.com/watchos-2-how-to-communicate-between-devices-using-watch-connectivity/">Kristina Thai</a>
+    , however I kept finding that the blogs, or code samples, took you about 90% of the way in order to get messaging to work.
+    They all seemed to leave out the most important part: how to actually create a response and send it directly back to the sender within a code block.
+     I'm not going to cover the different types of
+    messaging (background, etc) as Kristina's post did an excelent job of this, instead will cover the send-response portion.
+  </p>
+    <p>
+    Let's start on the watch.
+    </p>
+
+    <div class="alert alert-info" role="alert">This tutorial was written using Xcode 7 beta 2 (and Swift2 + WatchOS2) which means things may change before the GA build, but they should effect the code..hopefully.</div>
+
+    <h2>Sending a message from the watch</h2>
+
+    <p>Let's say that as soon as I display a view on my watch, I want to fetch some information from the cloud and display it.
+    With WatchOS2, I need to make sure I can communicate with the phone:</p>
+
+    <p>Make your class a delegate of WCSessionDelegate</p>
+
+    <pre class="prettyprint lang-html">
+      class OpportunityTableViewController: WKInterfaceController, WCSessionDelegate {
+    </pre>
+    <p>Check to ensure you have a paired phone</p>
+
+    <pre class="prettyprint lang-html">
+      override func willActivate() {
+        super.willActivate()
+
+        if (WCSession.isSupported()) {
+            session = WCSession.defaultSession()
+            session.delegate = self
+            session.activateSession()
+        }
+      }
+    </pre>
+    <p>Once the app knows that I have a paired phone, and active app, I can send the message:</p>
+
+  <pre class="prettyprint lang-html">
+    override func willActivate() {
+        super.willActivate()
+
+        if (WCSession.isSupported()) {
+            session = WCSession.defaultSession()
+            session.delegate = self
+            session.activateSession()
+
+            let applicationData = ["request-type":"fetchall", "param1": false, "param2": 100000]
+
+
+            if (WCSession.defaultSession().reachable) {
+                session.sendMessage(applicationData, replyHandler: { reply in
+                    //handle iphone response here
+                    if(reply["success"] != nil) {
+                        let a:AnyObject = reply["success"] as! NSDictionary
+                        self.loadTableData(a as! NSDictionary)
+                    }
+
+                }, errorHandler: {(error ) -> Void in
+                    // catch any errors here
+                })
+            }
+
+        }
+
+    }
+</pre>
+
+<p>My app uses the Salesforce Mobile SDK for retrieving data. In the code snippet above, I set the
+  applicationData payload with a few params to use in a query and pass this via the new <i>sendMessage</i>
+  func included in WCSession. Using a code block, I can handle the reply, or any errors. </p>
+
+<p>
+  The reply comes in the form of an AnyObject. I have found that the easiest approach is cast it the appropriate
+  class type within the block, and then hand the response off to a func. This keeps your block code clean, and
+  any data handling in its own encapsulated function.
+</p>
+
+<h2>Receiving a message from the Watch</h2>
+<p>Let's look at the other side of this request. The great thing about WatchOS2 vs OS1 is that
+  both sides - the phone and the watch - function exactly the same way:
+</p>
+  <ol>
+    <li>Activate a paired session
+    <li>send a message via the <i>sendMessage</i> function.
+    <li>handle the message using one of the session didReceiveMessage functions
+    <li>Either send, or receive, the reply via a code block.
+  </ol>
+  <p>We have looked at 1,2, and the receive part of 4. Now, we will look at number 3.</p>
+
+  <p> The code snippet below comes from a Helper class I have in my phone app. It has already been set as a
+    WCSessionDelegate and checked for the active session. </p>
+
+    <pre class="prettyprint lang-html">
+    func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
+      //make sure we are logged in
+       if( SFUserAccountManager.sharedInstance().currentUser == nil) {
+            replyHandler(["error": "not logged in"])
+       } else {
+
+           let reqType = message["request-type"] as! String
+
+           let sharedInstance = SFRestAPI.sharedInstance()
+
+           if(reqType == "fetchall") {
+
+               let nextQtr = message["param1"] as! Bool
+               let maxAmt = message["param2"] as! Int
+
+               let query = getAllOpportunitiesQuery(self, nextQuarter: nextQtr, maxOpportunityAmount: maxAmt)
+
+               sharedInstance.performSOQLQuery(query, failBlock: { error in
+                   replyHandler(["error": error])
+                   }) { response in  //success
+                       replyHandler(["success": response])
+               }
+
+           } else {
+               replyHandler(["error": "no such request-type: "+reqType])
+           }
+       }
+   }
+</pre>
+<p>I mentioned previously that I am using the Salesforce Mobile SDK to fetch data from the cloud. I have
+  left the mobile sdk code in the snippet as it is a great example of performing actions within the
+  reply code blocks (the big thing that I found was missing in other watchOS2 tutorials). Let's decompose the func a bit to help demonstrate how to communicate with the watch.
+</p>
+<p>The first check that is performed is whether the user is actually logged into salesforce, if they are not we can send the response directly back: </p>
+<pre class="prettyprint lang-html">
+    replyHandler(["error": "not logged in"])
+</pre>
+
+<p>ReplyHandler is the secret sauce. All you need to is pass in an NSDictionary and the WatchOS2 takes care of the rest.
+Throughout the snippet below, this pattern of performing some logic and then using <i>replyHandler</i> to respond. </p>
+
+<p> And, of course, a great practice is the use blocks within your block to send responses back.
+  This is probably the nicest improvement to app dev with watchOS2. WatchOS1 was a little funky with delegates in this space.</p>
+
+  <h2>Summary</h2>
+  <p>That is about all there is to it. WatchOS2 makes it much easier to register delegates and have them
+  send and respond in a clean, encapsulated way.</p>
+
+</div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <script type='text/javascript'>
+
+        $(document).ready(function() {
+            var jumboHeight = $('.jumbotron').outerHeight();
+
+      function parallax(){
+        var scrolled = $(window).scrollTop();
+       $('.bg').css('height', (jumboHeight-scrolled) + 'px');
+      }
+
+      $(window).scroll(function(e){
+         parallax();
+      });
+
+   });
+    </script>
+
+  </body>
+</html>
