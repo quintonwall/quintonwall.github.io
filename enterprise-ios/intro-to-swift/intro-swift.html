@@ -1,11 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8"/>
-</head>
-<body>
-<h1 id="usingsalesforceasmobilebackend">Introduction to Swift</h1>
 
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Quinton Wall : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/bootstrap.min.css">
+
+
+    <title>Designing Enterprise Mobile Apps With iOS and Salesforce</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/quintonwall/quintonwall.github.io/tree/master/enterprise-ios">Download entire series</a>
+          <h1 id="project_title">Designing Enterprise Mobile Apps With iOS and Salesforce</h1>
+          <h2 id="project_tagline"></h2>
+<p><center><a class="btn btn-primary btn-lg" style="background-color: transparent;color: #00A1E1;"
+                  href="../index.html"
+                      role="button">Series Home</a></center></p>
+          <h2 id="project_tagline"></h2>
+          <div class="row" style="text-align: center">
+            <a href="https://twitter.com/share" class="twitter-share-button" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<a href="https://twitter.com/quintonwall" class="twitter-follow-button" data-show-count="false">Follow @quintonwall</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+          </div>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Learning Swift</h3>
+
+<!-- ADD TUTORIAL CONTENT HERE -->
 <p>A little over a year ago, Apple surprised the Apple developer community with a new programming language called Swift. Swift is a modern language with similar syntax to Ruby, JavaScript, and Node.js. It is incredibly easy to pick up and write apps. Up until now, you have focused on building your prototype and getting the Salesforce Mobile SDK for iOS configured in your app. Now it is time to write some code and bring your app to life. 
 </p>
 <p>This tutorial will introduce the basics of working with Swift with a particular focus on what you will need to build your first apps connecting to salesforce, and some of the differences of Swift when compared to Apex. For more detailed information on the Swift language, check out the official <a href="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/index.html">Swift Language Guide.</a>  </p>
@@ -119,7 +154,7 @@ var externalId : Int?
 <p><pre>
 
 if let currId = externalId {
-	//perform some logic
+    //perform some logic
 }
 </pre></p>
 
@@ -163,7 +198,7 @@ print(shoppingList[1])
 
 //iterating
 for item in shoppingList {
-	print(item)
+    print(item)
 }
 
 </pre></p>
@@ -245,7 +280,26 @@ class Contact : NSObject {
 
 <h2 id="summary">Summary</h2>
 
-<p>There you go; a quick overview of the Swift language and how, in many ways, it is similar to Apex. Swift is a different language though and will take you some time to become confortable with it. Throughout this tutorial, I've highlighted the portions of the language which are most relevant as you start using the Mobile SDK to access Salesforce. There is a lot more to learn about Swift and I highlight encourage you to read the <a href="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/index.html">Swift Language Gudie</a> provided by Apple. In the next tutorial we are going to put some of our knowledge to work and start connecting our app to Salesforce and working with data.</p>
+<p>There you go; a quick overview of the Swift language and how, in many ways, it is similar to Apex. Swift is a different language though and will take you some time to become confortable with it. Throughout this tutorial, I've highlighted the portions of the language which are most relevant as you start using the Mobile SDK to access Salesforce. There is a lot more to learn about Swift and I highlight encourage you to read the <a href="https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/index.html">Swift Language Gudie</a> provided by Apple. In the next tutorial we are going to put some of our knowledge to work and start connecting our app to Salesforce and working with data. You can also access the Playground file we created during this tutorial right <a href="https://github.com/quintonwall/quintonwall.github.io/tree/master/enterprise-ios/intro-to-swift/Salesforce.playground">here.</a> </p>
 
-</body>
-</html>
+<!-- END ADD TUTORIAL CONTENT SECTION -->
+
+
+<a href="https://twitter.com/share" class="twitter-share-button" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+
+<!-- google analytics -->
+ <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-5374732-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+</section></div></body></html>
+
