@@ -188,7 +188,8 @@ the Mobile SDK 4.0 release is planned to support the use_frameworks directive. <
 
         func handleSdkManagerLogout()
         {
-          //todo
+          //todo: add segues from each page to logout to send back to login view
+          self.performSegueWithIdentifier("logout", sender: nil)
         }
 
         func handleUserSwitch(fromUser: SFUserAccount?, toUser: SFUserAccount?)
@@ -199,7 +200,6 @@ the Mobile SDK 4.0 release is planned to support the use_frameworks directive. <
 
     </div>
   </div>
-  If you have worked with the Mobile SDK before, you might notice I'm missing methods like handleSDKManagerLogout, handleUserSwitch. This is because I prefer to implement these methods in the view controller that I will write to actually deal with the UI of these operations. I find it cleaner, and keeps the AppDelegate from doing too much. This strategy is exactly how we are going to handle login.
 
   <h2>5. Handle Salesforce Login</h2>
   The last thing that we need to do is handle the salesforce login: display the login screen, and then accept the response. Most apps have some sort of welcome screen where a user can tap to login before being redirected to the app home. You probably have a storyboard that looks similar to mine below. When a user taps the connect to Salesforce button (on the ViewController labeled 1), we want to to perform the segue to Home (ViewController labeled 2).
