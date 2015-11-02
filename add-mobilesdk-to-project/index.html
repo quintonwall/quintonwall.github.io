@@ -215,6 +215,10 @@ the Mobile SDK 4.0 release is planned to support the use_frameworks directive. <
     and implement the Delegate's authManagerDidFinish function. I typically check if the username has been populated correctly. If it has, only then do I perform the segue to my HomeController.
     <div class="alert alert-warning" role="alert">The SFAuthenticationManagerDelegate does include a didAuthenticate function which is technically the correct place to perform a check for successful login, however I have found that this method gets called prior to the SDK performing a remove view for the Salesforce login screen. The result is that our newly displayed Home ViewController is removed. :(</div>
 
+     Within the viewDidLoad method, register this controller as a delegate.
+    <pre class="prettyprint">
+      SFAuthenticationManager.sharedManager().addDelegate(self)
+  </pre>
 <pre class="prettyprint">
     func authManagerDidFinish(manager: SFAuthenticationManager!, info: SFOAuthInfo!) {
 
