@@ -108,11 +108,23 @@
 
   <h2>And, you're done!</h2>
   <p>
-    That's it. We now have a very easy way to protect our views in iOS apps. Running your app in the simulator will automatically transition to the login view.</p>
+    That's it. We now have a very easy way to protect our views in iOS apps. Running your app in the simulator will automatically transition to the login view.
+  After a succesful login, simply dismiss the loginView from the SFAuthenticationManager's delegate method</p>
   </p>
-  <center>
-    <img class="media-object media-middle" src="images/showApp.gif" />
- </center>
+  <div class="well">
+    <pre class="prettyprint lang-html">
+  func authManagerDidFinish(manager: SFAuthenticationManager!, info: SFOAuthInfo!) {
+
+       if  SFAuthenticationManager.sharedManager().haveValidSession {
+           self.dismissViewControllerAnimated(true, completion: {})
+       }
+   }
+ </pre>
+</div>
+<center>
+  <img class="media-object media-middle" src="images/showApp.gif" />
+</center>
+
 
 
 
