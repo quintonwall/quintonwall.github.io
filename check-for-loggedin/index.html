@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Check For Logged In Status</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/docs.min.css" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+
+    <!--
+      using this for better syntax highlighting
+      http://demo.stanleyhlng.com/prettify-js/?id=bootstrap-light
+    -->
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+<!-- add a funky responsive image in the jumbotron -->
+  <style type="text/css">
+    .bg {
+      background: url('images/bg_oval-wave.jpg') no-repeat center center;
+      position: fixed;
+      width: 100%;
+      height: 250px; /*same height as jumbotron */
+      top:0;
+      left:0;
+      z-index: -1;
+    }
+
+    .jumbotronX {
+      height: 250px;
+      color: white;
+      text-shadow: #444 0 1px 1px;
+      background:transparent;
+      }
+
+    .btn {
+      background:transparent;
+      border-color: white;
+    }
+
+
+  </style>
+  </head>
+  <body>
+<!-- set the paralax background -->
+  <!--div class="bg"></div -->
+  <div class="bs-docs-header" id="content" tabindex="-1">
+     <div class="container">
+       <p>Checking for logged in status in a Salesforce Mobile SDK app</p>
+       <a href="../index.html" class="btn btn-primary"><span class="glyphicon glyphicon-home" aria-hidden="true"/></a>
+       <a href="https://twitter.com/share" class="btn btn-primary" data-via="quintonwall">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<a href="https://twitter.com/quintonwall" class="btn btn-primary" data-show-count="false">Follow @quintonwall</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+  </div>
+<div class="well" style="background-color:white;">
+    <h2>Introduction</h2>
+    <p>A very common requirement of mobile apps that use the Salesforce Mobile SDK is to check whether a user is logged in before displaying a screen.
+      Thankfully it is a very easy task that requires only a few lines of code, and some understanding of Segues. This tutorial assumes that
+      you already have your app setup with the Mobile SDK. If you haven't done this already, go check out <a href="http://quintonwall.github.io/add-mobilesdk-to-project/index.html">this tutorial.</a>
+    </p>
+
+
+    <h2>For each ViewController that needs to check for a logged in user.</h2>
+    <p> Add the following code to your viewDidAppear function.
+    <div class="well">
+      <pre class="prettyprint lang-html">
+        if  !SFAuthenticationManager.sharedManager().haveValidSession {
+           self.performSegueWithIdentifier("login", sender: self)
+       }
+      </pre>
+    </div>
+    <p>We are using the Mobile SDK's authentication manager to confirm whether the user has a valid session.
+    If they do not, we want to send them to a view that prompts the user to login. This is the same view/button from the <a href="http://quintonwall.github.io/add-mobilesdk-to-project/index.html">Add the Salesforce Mobile SDKto an existing iOS project</a>tutorial. </p>
+    <p>That is all we have to do in our controllers. Next, we will set up our storyboard.
+
+   <h2>Add Login Segues To Your Storyboard</h2>
+   <p>For our sample, we will have 2 ViewControllers. I've labeled them Home and Login. Home is the initial view controller in my project,
+     and have the additional logic to check for a valid session in the ViewControllers viewWillAppear function that we just covered.</p>
+  <img class="media-object media-middle" src="images/Main_storyboard.png" />
+
+  <p>
+    From the Home View Controller, right click the controller icon and drag to the Login ViewController. When you release the mouse button, select "Present Modally".
+    We are going to present the login screen modally because it is typical behavior to add show a login view above the current view, and we dont need to add the login view
+    to our navigation tree (once we are logged in, we are going to pop the login view controller from the stack to save memory)
+  </p>
+  <img class="media-object media-middle" src="images/CreateSegue.gif" />
+
+  <p>
+    The last thing that you need to you is configure your newly created segue with the identifier "login". This is the label that we configured in performSegueWithIdentifier code. It tells iOS which segue to follow.
+    In our case, we only have one segue, but as you build our your app, adding identifiers to your segues helps with maintenance.
+  </p>
+  <img class="media-object media-middle" src="images/CreateSegue.gif" />
+
+  <h2>And, you're done!</h2>
+  <p>
+    That's it. We now have a very easy way to protect our views in iOS apps. Running your app in the simulator will automatically transition to the login view.</p>
+  </p>
+  <img class="media-object media-middle" src="images/showApp.gif" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">If you already have a Podfile</div>
+    <div class="panel-body">
+      Add the following line:
+      <pre class="prettyprint lang-html">
+        pod 'SalesforceMobileSDK-iOS'
+      </pre>
+      Then run:
+      <pre class="prettyprint lang-html">
+        $ pod install
+      </pre>
+
+    </div>
+  </div>
+  <div class="alert alert-warning" role="alert">The Mobile SDK uses static libraries. This means you can not link via the use_frameworks! directive.
+  The pod install command will work, but build time errors such as missing SFLogger.h files will be raised. Good news is that
+the Mobile SDK 4.0 release is planned to support the use_frameworks directive. </div>
+
+
+   <div class="panel panel-primary">
+    <div class="panel-heading">If you don't have a Podfile</div>
+    <div class="panel-body">
+      Change directories, via the command line to your Xcode project home, run:
+      <pre class="prettyprint lang-html">
+        $ pod echo "pod 'SalesforceMobileSDK-iOS'" > Podfile
+        $ pod install
+      </pre>
+
+      <p>Once completed, your Xcode project will have created a workspace file, and have the Mobile SDK libraries ready to go. From now on, use the *.xcworkspace file, and not the *.xcodeproj file.</p>
+      </div>
+  </div>
+
+  <h2>3. Add the Bridging Header</h2>
+  The Mobile SDK is currently written in Objective-C. In order to access the libraries from Swift, we need to add a bridging header.
+  <ol>
+  <li>Create a new header (.h) file in the root of your project, and call it [projectname]-BridgingHeader.h (Avoid adding any spaces in the name. If you do, Xcode changes those to an underscore whenever you need to reference them in your app.)
+  <li> In your project build settings, search for Swift Compiler – Code Generation, and next to Objective-C Bridging Header add the name of the file you just created.
+  </ol>
+
+  <p>Now that you have your bridging header file created, add the following code:</p>
+<pre class="prettyprint lang-html">
+
+
+        #import &lt;SalesforceCommonUtils/SFLogger.h&gt;
+        #import &lt;SalesforceSDKCore/SFUserAccountManager.h&gt;
+        #import &lt;SalesforceSDKCore/SalesforceSDKManager.h&gt;
+        #import &lt;SalesforceSDKCore/SFAuthenticationManager.h&gt;
+        #import &lt;SalesforceSDKCore/SFPushNotificationManager.h&gt;
+        #import &lt;SalesforceSDKCore/SFDefaultUserManagementViewController.h&gt;
+        #import &lt;SalesforceRestAPI/SFRestAPI.h&gt;
+        #import &lt;SalesforceRestAPI/SFRestAPISalesforceAction.h&gt;
+        #import &lt;SalesforceRestAPI/SFRestAPI+Blocks.h&gt;
+        #import &lt;SalesforceRestAPI/SFRestAPI+Files.h&gt;
+        #import &lt;SalesforceOAuth/SFOAuthInfo.h&gt;
+      </pre>
+
+  <h2>4. Configure your AppDelegate</h2>
+  Now we have our project all configured, we need to update the AppDelgate to initialize the Mobile SDK.
+
+  <div class="panel panel-primary">
+
+    <div class="panel-body">
+      Add the following code above your class definition:
+      <pre class="prettyprint lang-html">
+        let RemoteAccessConsumerKey = "your-connected-app-consumer-key";
+        let OAuthRedirectURI        = "your-connected-app-redirect-uri";
+        let scopes = ["api"];
+      </pre>
+      Then add the following code into your init method:
+      <pre class="prettyprint">
+        SFLogger.setLogLevel(SFLogLevelDebug)
+
+        SalesforceSDKManager.sharedManager().connectedAppId = RemoteAccessConsumerKey
+        SalesforceSDKManager.sharedManager().connectedAppCallbackUri = OAuthRedirectURI
+        SalesforceSDKManager.sharedManager().authScopes = scopes
+        SalesforceSDKManager.sharedManager().postLaunchAction = {
+            [unowned self] (launchActionList: SFSDKLaunchAction) in
+            let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
+            self.log(SFLogLevelInfo, msg:"Post-launch: launch actions taken: \(launchActionString)");
+
+        }
+        SalesforceSDKManager.sharedManager().launchErrorAction = {
+            [unowned self] (error: NSError?, launchActionList: SFSDKLaunchAction) in
+            if let actualError = error {
+                self.log(SFLogLevelError, msg:"Error during SDK launch: \(actualError.localizedDescription)")
+            } else {
+                self.log(SFLogLevelError, msg:"Unknown error during SDK launch.")
+            }
+        }
+        SalesforceSDKManager.sharedManager().postLogoutAction = {
+            [unowned self] in
+            self.handleSdkManagerLogout()
+        }
+        SalesforceSDKManager.sharedManager().switchUserAction = {
+            [unowned self] (fromUser: SFUserAccount?, toUser: SFUserAccount?) -> () in
+            self.handleUserSwitch(fromUser, toUser: toUser)
+        }
+
+        func handleSdkManagerLogout()
+        {
+          //todo: add segues from each page to logout to send back to login view
+          self.performSegueWithIdentifier("logout", sender: nil)
+        }
+
+        func handleUserSwitch(fromUser: SFUserAccount?, toUser: SFUserAccount?)
+        {
+          //todo
+        }
+      </pre>
+
+    </div>
+  </div>
+
+  <h2>5. Handle Salesforce Login</h2>
+  The last thing that we need to do is handle the salesforce login: display the login screen, and then accept the response. Most apps have some sort of welcome screen where a user can tap to login before being redirected to the app home. You probably have a storyboard that looks similar to mine below. When a user taps the connect to Salesforce button (on the ViewController labeled 1), we want to to perform the segue to Home (ViewController labeled 2).
+  <img class="media-object media-middle" src="images/storyboardNums.png" />
+   Within ViewController 1, and once you have wired up the appropriate outlets and actions to handle button taps, and added a seque to ViewController 2 (in my instance I gave it the identifier "loggedIn") add the following line of code to kick off the Salesforce authentication flow into your connectTapped function.
+   <pre class="prettyprint lang-html">
+        SalesforceSDKManager.sharedManager().launch()
+    </pre>
+    Then, to handle to end of the authentication flow, specify that your View Controller is a delegate for the MobileSDK:
+    <pre class="prettyprint">
+     class MyViewController: UIViewController, SFAuthenticationManagerDelegate
+    </pre>
+    and implement the Delegate's authManagerDidFinish function. I typically check if the username has been populated correctly. If it has, only then do I perform the segue to my HomeController.
+    <div class="alert alert-warning" role="alert">The SFAuthenticationManagerDelegate does include a didAuthenticate function which is technically the correct place to perform a check for successful login, however I have found that this method gets called prior to the SDK performing a remove view for the Salesforce login screen. The result is that our newly displayed Home ViewController is removed. :(</div>
+
+     Within the viewDidLoad method, register this controller as a delegate.
+    <pre class="prettyprint">
+      SFAuthenticationManager.sharedManager().addDelegate(self)
+  </pre>
+<pre class="prettyprint">
+    func authManagerDidFinish(manager: SFAuthenticationManager!, info: SFOAuthInfo!) {
+
+     if !SFUserAccountManager.sharedInstance().currentUser.userName.isEmpty {
+         //call the segue with the name you give it in the storyboard editor
+         self.performSegueWithIdentifier("loggedIn", sender: nil)
+        }
+    }
+    </pre>
+
+    <h2>Summary</h2>
+    That's it. Your app now has the Salesforce Mobile SDK for iOS configured, and you have a pretty nifty little login button/flow to go with it. The code I used throughout this tutorial is from a project that I am actively working on. I made a <a href="https://github.com/quintonwall/opt/tree/Basic-App-with-Auth">branch of it with just the config and code</a> I used here.
+
+
+</div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <script type='text/javascript'>
+
+        $(document).ready(function() {
+            var jumboHeight = $('.jumbotron').outerHeight();
+
+      function parallax(){
+        var scrolled = $(window).scrollTop();
+       $('.bg').css('height', (jumboHeight-scrolled) + 'px');
+      }
+
+      $(window).scroll(function(e){
+         parallax();
+      });
+
+   });
+    </script>
+
+  </body>
+</html>
