@@ -222,9 +222,12 @@ the Mobile SDK 4.0 release is planned to support the use_frameworks directive. <
 <pre class="prettyprint">
     func authManagerDidFinish(manager: SFAuthenticationManager!, info: SFOAuthInfo!) {
 
-     if !SFUserAccountManager.sharedInstance().currentUser.userName.isEmpty {
+     if !!SFAuthenticationManager.sharedManager().haveValidSession {
          //call the segue with the name you give it in the storyboard editor
          self.performSegueWithIdentifier("loggedIn", sender: nil)
+
+         //or simply dismiss the login view to return to where you came from
+         // self.dismissViewControllerAnimated(true, completion: {})
         }
     }
     </pre>
